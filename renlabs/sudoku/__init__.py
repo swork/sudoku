@@ -1,5 +1,5 @@
 from . import puzzle, color
-import re, argparse, sys, logging
+import re, argparse, sys, logging, json
 from copy import deepcopy
 from .puzzle import Puzzle, DeadEnd
 from .util import print_grid, read_puzzle
@@ -103,9 +103,13 @@ def main():
             [ 0, 0, 0, 0, 0, 2, 0, 9 ]
         ])
     elif a.json:
-        s.inputList(json.loads(a.json))
+        if a.json[0] == '@':
+            with open(a.json[1:]) as f:
+                s.inputList(json.load(f))
+        else:
+            s.inputList(json.loads(a.json))
     else:
-        print("Need input.")
+        print("Need input. '--json='?")
         return 99
 
     if a.json:
