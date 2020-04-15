@@ -1,4 +1,4 @@
-import color
+from . import color
 import sys, re
 
 def print_grid(p0, p_from, indent=0):

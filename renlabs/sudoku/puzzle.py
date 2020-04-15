@@ -3,7 +3,7 @@
 import sys, re
 from copy import deepcopy
 from functools import total_ordering
-from util import print_grid
+from .util import print_grid
 
 class DeadEnd(Exception):
     pass
