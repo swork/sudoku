@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="sudoku",
-    version="0.0.1",
+    version="1.0.0",
     packages=[ 'renlabs.sudoku' ],
     author="Steve Work",
     author_email="steve@work.renlabs.com",
