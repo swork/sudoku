@@ -44,8 +44,6 @@ class Sudoku:
     def inputList(self, input):
         self._resolved = False
         self._solution = None
-        while len(input) < 9:
-            input.append([ 0,0,0,0,0,0,0,0,0 ])
         if len(input) > 9:
             raise ValueError('Too many rows in input')
         for row in input:
@@ -53,11 +51,17 @@ class Sudoku:
                 row.append(0)
             if len(row) > 9:
                 raise ValueError(f'Too many columns in input row {row!r}')
+        while len(input) < 9:
+            input.append([0,] * 9)
         self._input = input
 
     def inputJson(self, jstr):
         l = json.loads(jstr)
         self.inputList(l)
+
+    def preflight(self):
+        puz = Puzzle(self._input)
+        return puz.preflight()
 
     @property
     def solution(self):

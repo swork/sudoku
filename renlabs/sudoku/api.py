@@ -56,19 +56,29 @@ class SudokuAPI(MethodView):
         if not isinstance(input, list):
             return self.bomb(f"Decoded to invalid input: {input!r}")
         s.inputList(input)
-        if s.solution:
+        preflight = s.preflight()
+        if preflight:
+            return flask.jsonify(
+                status=204,
+                message='Any_solution',
+                body={
+                    "input": input,
+                    "Any_solution": "Any solution is possible, as the input is completely unconstrained."
+                })
+        elif preflight is None and s.solution:
             return flask.jsonify(
                 status=200,
                 message='OK',
                 body={
                     "input": input,
-                    "solution": s.solution})
+                    "OK": s.solution})
+        # else
         return flask.jsonify(
             status=204,
-            message='No solution',
+            message='No_solution',
             body={
                 "input": input,
-                "nosolution": "No solution is possible."
+                "No_solution": "No solution is possible."
             })
 
     def bomb(self, message):
@@ -76,7 +86,7 @@ class SudokuAPI(MethodView):
             status=400,
             message="Error",
             body={
-                "message": message
+                "Error": message
             })
 
 sudoku_view = SudokuAPI.as_view('sudoku_api')

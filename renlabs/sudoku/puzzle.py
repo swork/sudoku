@@ -47,6 +47,18 @@ class Cell:
             raise DeadEnd
         return poss
 
+    def preflight(self):
+        if self.v == 0:
+            return None
+        if self.p.rowvals(self.y).count(self.v) > 1:
+            return False
+        if self.p.colvals(self.x).count(self.v) > 1:
+            return False
+        if self.p.sqrvals(self.y, self.x).count(self.v) > 1:
+            return False
+        return None
+
+
 class Puzzle:
     def __init__(self, p):
         """
@@ -149,37 +161,52 @@ class Puzzle:
         return rows
 
     def rowvals(self, y):
-        s = set()
+        s = list()
         for xi in range(0, 9):
-            s.add(self.cells[y][xi].v)
-        s.remove(0)
+            v = self.cells[y][xi].v
+            if v:
+                s.append(v)
         if Debug > 1:
             print("rowvals %d: %s" % (y,repr(sorted(s))))
         return s
 
     def colvals(self, x):
-        s = set()
+        s = list()
         for yi in range(0, 9):
-            s.add(self.cells[yi][x].v)
-        s.remove(0)
+            v = self.cells[yi][x].v
+            if v:
+                s.append(v)
         if Debug > 1:
             print("colvals %d: %s" % (x,repr(sorted(s))))
         return s
 
     def sqrvals(self, y, x):
-        s = set()
+        s = list()
         ys = (y // 3) * 3
         xs = (x // 3) * 3
         for yi in range(ys, ys+3):
             for xi in range(xs, xs+3):
-                s.add(self.cells[yi][xi].v)
-        s.remove(0)
+                v = self.cells[yi][xi].v
+                if v:
+                    s.append(v)
         if Debug > 1:
             print("sqr %d,%d: %s" % (y,x,repr(sorted(s))))
         return s
 
     def possible(self, y, x):
         return self.cells[y][x].possible()
+
+    def preflight(self):
+        any_v = False
+        for y in range(0,9):
+            for x in range(0,9):
+                if self.cells[y][x].preflight() == False:
+                    return False  # illegal input
+                if not any_v and self.cells[y][x].v != 0:
+                    any_v = True
+        if not any_v:
+            return True  # unconstrained input
+        return None
 
     def split(self):
         variants = list()
